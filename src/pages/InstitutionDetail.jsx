@@ -35,6 +35,7 @@ import {
   Edit as EditIcon,
   ArrowBack as ArrowBackIcon,
   CloudUpload as CloudUploadIcon,
+  Group as GroupIcon
 } from '@mui/icons-material'
 
 const InstitutionDetail = () => {
@@ -361,6 +362,18 @@ const InstitutionDetail = () => {
 
       {isAdmin && (
         <>
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Gestion des utilisateurs
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<GroupIcon />}
+              onClick={() => navigate(`/institutions/${id}/users`)}
+            >
+              Gérer les utilisateurs
+            </Button>
+          </Paper>
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               Albums photos

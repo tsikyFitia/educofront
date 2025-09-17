@@ -20,6 +20,7 @@ import {
   BarChart as ChartIcon,
   Notifications as NotificationsIcon,
 } from '@mui/icons-material'
+import Navbar from '../components/Navbar'
 
 const StatCard = ({ title, value, icon, color }) => (
   <Card sx={{ height: '100%' }}>
@@ -44,6 +45,7 @@ const Dashboard = () => {
 
   return (
     <>
+      <Navbar/>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" gutterBottom>
           Tableau de bord
