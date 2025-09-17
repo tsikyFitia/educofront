@@ -14,6 +14,9 @@ import InstitutionDetail from './pages/InstitutionDetail'
 import InviteAdmin from './pages/InviteAdmin'
 import Layout from './components/layout/Layout'
 import CreateInstitution from './pages/CreateInstitution'
+import InstitutionUsers from './pages/InstitutionUsers'
+import InstitutionLevels from './pages/InstitutionLevels'
+import InstitutionSubjects from './pages/InstitutionSubjects'
 import { CircularProgress, Box } from '@mui/material'
 
 const theme = createTheme({
@@ -64,6 +67,9 @@ function App() {
           <Route path="/invite-admin" element={isAuthenticated ? <Layout><InviteAdmin /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
           <Route path="/create-institution" element={isAuthenticated ? <Layout><CreateInstitution /></Layout> : <Navigate to="/login" replace />} />
+          <Route path="/institutions/:id/users" element={isAuthenticated ? <Layout><InstitutionUsers /></Layout> : <Navigate to="/login" replace />} />
+          <Route path="/institution/levels" element={isAuthenticated ? <Layout><InstitutionLevels /></Layout> : <Navigate to="/login" replace />} />
+          <Route path="/institution/subjects" element={isAuthenticated ? <Layout><InstitutionSubjects /></Layout> : <Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>

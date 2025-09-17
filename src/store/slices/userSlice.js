@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '../../services/api'
 
-// 🔄 Récupérer tous les utilisateurs
+// Récupérer tous les utilisateurs
 export const fetchAllUsers = createAsyncThunk(
   'users/fetchAll',
   async (_, { rejectWithValue }) => {
@@ -14,7 +14,7 @@ export const fetchAllUsers = createAsyncThunk(
   }
 )
 
-// 🔄 Récupérer uniquement les admins
+// Récupérer uniquement les admins
 export const fetchAdmins = createAsyncThunk(
   'users/fetchAdmins',
   async (_, { rejectWithValue }) => {
@@ -27,7 +27,7 @@ export const fetchAdmins = createAsyncThunk(
   }
 )
 
-// 🔄 Créer un utilisateur
+// Créer un utilisateur générique
 export const createUser = createAsyncThunk(
   'users/create',
   async (userData, { rejectWithValue }) => {
@@ -40,7 +40,33 @@ export const createUser = createAsyncThunk(
   }
 )
 
-// 🔄 Récupérer un utilisateur par ID
+// Créer un étudiant
+export const createStudent = createAsyncThunk(
+  'users/createStudent',
+  async (studentData, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/admin/users/students', studentData)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { detail: 'Erreur lors de la création de l\'étudiant' })
+    }
+  }
+)
+
+// Créer un enseignant
+export const createTeacher = createAsyncThunk(
+  'users/createTeacher',
+  async (teacherData, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/admin/users/teachers', teacherData)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { detail: 'Erreur lors de la création de l\'enseignant' })
+    }
+  }
+)
+
+// Récupérer un utilisateur par ID
 export const fetchUser = createAsyncThunk(
   'users/fetchOne',
   async (userId, { rejectWithValue }) => {
@@ -53,7 +79,7 @@ export const fetchUser = createAsyncThunk(
   }
 )
 
-// 🔄 Mettre à jour un utilisateur
+// Mettre à jour un utilisateur
 export const updateUser = createAsyncThunk(
   'users/update',
   async ({ userId, updateData }, { rejectWithValue }) => {
@@ -66,7 +92,7 @@ export const updateUser = createAsyncThunk(
   }
 )
 
-// 🔄 Supprimer un utilisateur
+// Supprimer un utilisateur
 export const deleteUser = createAsyncThunk(
   'users/delete',
   async (userId, { rejectWithValue }) => {
@@ -79,7 +105,7 @@ export const deleteUser = createAsyncThunk(
   }
 )
 
-// 🔄 Lier un admin à une institution
+// Lier un admin à une institution
 export const linkAdminToInstitution = createAsyncThunk(
   'users/linkAdmin',
   async ({ institutionId, adminId }, { rejectWithValue }) => {
@@ -92,7 +118,7 @@ export const linkAdminToInstitution = createAsyncThunk(
   }
 )
 
-// 🔄 Retirer un admin d’une institution
+// Retirer un admin d’une institution
 export const unlinkAdminFromInstitution = createAsyncThunk(
   'users/unlinkAdmin',
   async ({ institutionId, adminId }, { rejectWithValue }) => {
@@ -123,6 +149,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // fetchAllUsers
       .addCase(fetchAllUsers.pending, (state) => {
         state.loading = true
       })
@@ -135,6 +162,7 @@ const userSlice = createSlice({
         state.error = action.payload.detail
       })
 
+      // fetchAdmins
       .addCase(fetchAdmins.pending, (state) => {
         state.loading = true
       })
@@ -147,34 +175,60 @@ const userSlice = createSlice({
         state.error = action.payload.detail
       })
 
+      // createUser
       .addCase(createUser.fulfilled, (state, action) => {
         state.list.push(action.payload)
       })
+
+      // createStudent
+      .addCase(createStudent.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(createStudent.fulfilled, (state, action) => {
+        state.loading = false
+        state.list.push(action.payload)
+      })
+      .addCase(createStudent.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload.detail
+      })
+
+      // createTeacher
+      .addCase(createTeacher.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(createTeacher.fulfilled, (state, action) => {
+        state.loading = false
+        state.list.push(action.payload)
+      })
+      .addCase(createTeacher.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload.detail
+      })
+
+      // fetchUser
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.current = action.payload
       })
+
+      // updateUser
       .addCase(updateUser.fulfilled, (state, action) => {
         const updated = action.payload
         const index = state.list.findIndex(u => u._id === updated._id)
-        if (index !== -1) {
+        if (updated?._id && index !== -1) {
           state.list[index] = updated
         }
         if (state.current?._id === updated._id) {
           state.current = updated
         }
       })
+
+      // deleteUser
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.list = state.list.filter(u => u._id !== action.payload)
         if (state.current?._id === action.payload) {
           state.current = null
         }
-      })
-
-      .addCase(linkAdminToInstitution.fulfilled, (state, action) => {
-        // Optionnel : mettre à jour institution ou admin localement
-      })
-      .addCase(unlinkAdminFromInstitution.fulfilled, (state, action) => {
-        // Optionnel : mettre à jour institution ou admin localement
       })
   },
 })
