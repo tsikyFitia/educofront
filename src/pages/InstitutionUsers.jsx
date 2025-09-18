@@ -40,7 +40,7 @@ import {
   Edit as EditIcon,
 } from '@mui/icons-material'
 import { fetchInstitution } from '../store/slices/institutionSlice'
-import { fetchAllUsers, createStudent, createTeacher, deleteUser, updateUser } from '../store/slices/userSlice'
+import { fetchAllUsers, createStudent, createTeacher, deleteUser, updateUser , resetUserPassword} from '../store/slices/userSlice'
 import { fetchSubjects } from '../store/slices/subjectSlice'
 import { fetchLevels } from '../store/slices/levelSlice'
 
@@ -280,6 +280,35 @@ const InstitutionUsers = () => {
       }
     )
   }
+  const handleResetPassword = (user) => {
+    const newPassword = "TempPassword123";
+    confirmAction(
+      'Réinitialiser le mot de passe',
+      'Confirmer la réinitialisation du mot de passe ?',
+      () => {
+        dispatch(resetUserPassword({ 
+          institutionId: id, 
+          userId: user.id || user._id, 
+          newPassword 
+        }))
+          .unwrap()
+          .then(() => {
+            setAlert({ 
+              open: true, 
+              message: 'Mot de passe réinitialisé avec succès', 
+              severity: 'success' 
+            });
+          })
+          .catch((e) => {
+            setAlert({ 
+              open: true, 
+              message: e.detail || 'Erreur lors de la réinitialisation', 
+              severity: 'error' 
+            })
+          })
+      }
+    )
+  }
 
   const handleHardDeleteUser = (userId) => {
     confirmAction(
@@ -357,6 +386,13 @@ const InstitutionUsers = () => {
                       </Box>
                     </CardContent>
                     <CardActions>
+                      <Button
+                        color="primary"
+                        size="small"
+                        onClick={() => handleResetPassword(u)}
+                      >
+                        Réinitialiser mot de passe
+                      </Button>
                       <IconButton size="small" onClick={() => handleOpenEdit(u)} title="Modifier">
                         <EditIcon />
                       </IconButton>

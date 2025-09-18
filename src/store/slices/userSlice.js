@@ -1,6 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '../../services/api'
 
+
+export const resetUserPassword = createAsyncThunk(
+  "users/resetPassword",
+  async ({ institutionId, userId, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(
+        `/admin/users/institutions/${institutionId}/users/${userId}/password`,
+        { new_password: newPassword }
+      );
+      console.log('response.data', response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { detail: "Erreur lors de la réinitialisation" }
+      );
+    }
+  }
+)
+
+
 // Récupérer tous les utilisateurs
 export const fetchAllUsers = createAsyncThunk(
   'users/fetchAll',
